@@ -9,3 +9,63 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# 1. Implement this model in R (as a differential equation)
+
+```{r}
+# Loading necessary packages
+
+library(deSolve)
+library(ggplot2)
+library(tidyverse)
+
+# Bringing in the model from the .R file
+
+source("")
+
+
+```
+
+# 2. Run the model for 300 years (using the ODE solver) starting with an initial forest size of 10 kg/C, and using the following parameters: canopy closure threshold of 100 kgC, a carrying capacity of 500 kg C, a early growth rate of 0.01, a later growth rate of 2 kg/year, and an air temperature of 20C
+
+```{r}
+
+initial_C <- 10
+
+closure_thres <- 100
+k <- 500
+
+r <- 0.01
+g <- 2
+
+air_temp <- 20
+
+
+
+
+```
+
+# Graph the results
+
+```{r}
+
+
+
+```
+
+# 3. Run a sobol sensitivity analysis that explores how the estimated maximum forest size varies with early and later growth rates. 
+
+```{r}
+
+
+
+```
+
+
+# Graph the results of the sensitivity analysis as a box plot and a plot of the two sobol indices (S and T)
+
+```{r}
+
+
+
+```
+
