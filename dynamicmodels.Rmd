@@ -20,7 +20,9 @@ library(tidyverse)
 
 # Bringing in the model from the .R file
 
-source("")
+source("forestgrowthmodel.R")
+
+# forest_growth(time = c(1:10), C = 10, r = 0.01, g = 2, closure = 100, K = 500, temp = 20)
 
 
 ```
