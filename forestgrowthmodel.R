@@ -9,7 +9,7 @@
 # if C < closure_thres, then use the above equation (and r as the exponential growth rate)
 # if C > closure_thres, then use the above equation (and g as the linear growth rate)
 
-forest_growth = function(time, C, r, g, closure, K, temp){
+forestgrowthmodel = function(time, C, r, g, closure, K, temp){
   
   if(temp < 0){
     dgrowth = 0}

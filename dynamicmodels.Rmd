@@ -75,6 +75,40 @@ ggplot(results, aes(Year, Forest Size))+geom_point()+labs(y="Forest Size", "Year
 # Therefore we are measuring the sensitivity of the r (early growth rate) and g (later growth rate) variables
 
 
+# number of parameters
+np = 500
+
+# distributions for parameters
+sobol_r = rnorm(mean = -0.015, sd = 0.003, n = np)
+sobol_g = rnorm(mean = -0.0046, sd = 0.00092, n = np)
+
+
+X1 = cbind.data.frame(sobol_r, sobol_g)
+
+# repeate distribution sampling
+sobol_r = rnorm(mean = -0.015, sd = 0.003, n = np)
+sobol_g = rnorm(mean = -0.0046, sd = 0.00092, n = np)
+
+
+X2 = cbind.data.frame(sobol_r, sobol_g)
+
+
+sobol_forest = sobol2007(model = NULL, X1, X2, nboot = 100)
+
+# run model for the parameter sets
+
+sobol_forest_result = mapply(FUN = forestgrowthmodel, 
+                      r = sobol_forest$X$sobol_r, 
+                      g = sobol_forest$X$sobol_g, 
+                      MoreArgs = list(climate = clim))
+
+sobol_forest_tell = sensitivity::tell(sobol_forest, sobol_forest_result, sobol_forest_result.names="mean_value")
+
+sobol_forest_tell$S
+
+sobol_forest_tell$T
+
+
 
 ```
 
@@ -83,6 +117,31 @@ ggplot(results, aes(Year, Forest Size))+geom_point()+labs(y="Forest Size", "Year
 
 ```{r}
 
+# Box plot
+sobol_forest_result_graph <- matrix((unlist(sobol_forest_result)), ncol = 1, byrow = TRUE)
+colnames(sobol_forest_result_graph) = c("mean_value")
+
+sobol_forest_result_graph_df <- as.data.frame(sobol_forest_result)
+
+
+sobol_forest_result_2 <- cbind.data.frame(sobol_forest_tell$X, mean_value = sobol_forest_tell$y)
+sobol_forest_result_box <- gather(sobol_forest_result_2, key = "parameter", value = "values", sobol_r, sobol_g)
+
+
+boxplot <- ggplot(data = sobol_forest_result_box, aes(x = parameter, y = values)) +
+    geom_boxplot(aes(color = parameter)) +
+    labs(
+      title = "Sobol Method",
+      x = "Parameters",
+      y = "Yield (As Anomaly)"
+      ) +
+    theme_classic()
+
+boxplot
+
+
+# Plot of the two sobol indices
+plot(sobol_forest_tell)
 
 
 ```
