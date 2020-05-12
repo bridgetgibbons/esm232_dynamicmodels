@@ -9,19 +9,19 @@
 # if C < closure_thres, then use the above equation (and r as the exponential growth rate)
 # if C > closure_thres, then use the above equation (and g as the linear growth rate)
 
-forestgrowthmodel = function(time, C, r, g, closure, K, temp){
+forest_growth = function(time, C, parms){
   
-  if(temp < 0){
+  if(parms$temp < 0){
     dgrowth = 0}
   else{
-    if(C < closure){
-      dgrowth = r*C
+    if(C < parms$closure){
+      dgrowth = parms$r*C
     }
     else{
-      dgrowth = g
+      dgrowth = parms$g
     }
   }
-  if(C >= K){
+  if(C >= parms$K){
     dgrowth = 0
   }
   
