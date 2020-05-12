@@ -21,7 +21,7 @@ library(sensitivity)
 
 # Bringing in the model from the .R file
 
-source("forestgrowthmodel.R")
+source("../esm232_dynamicmodels/forestgrowthmodel.R")
 
 
 
@@ -37,19 +37,19 @@ source("forestgrowthmodel.R")
 ```{r}
 
 # Defining the initial conditions
-initial_C <- 10
-closure_thres <- 100
-k <- 500
+C <- 10
+closure <- 100
+K <- 500
 r <- 0.01
 g <- 2
-air_temp <- 20
+temp <- 20
 
 # Defining the necessary components for the ode solver
 years = seq(from=1, to=300, by=1)
-parms = list(closure_thres = 100, k = 500, r = 0.01, g = 2, air_temp = 20)
+parms = list(closure = 100, K = 500, r = 0.01, g = 2, temp = 20)
 
 # Running the solver
-results = ode(y = initial_C, times = years, func = forestgrowthmodel, parms = parms)
+results = ode(y = C, times = years, func = forestgrowthmodel, parms = parms)
 head(results)
 
 # Assigning column names
