@@ -17,10 +17,11 @@ knitr::opts_chunk$set(echo = TRUE)
 library(deSolve)
 library(ggplot2)
 library(tidyverse)
+library(sensitivity)
 
 # Bringing in the model from the .R file
 
-source("")
+source("forestgrowthmodel.R")
 
 
 ```
@@ -29,18 +30,24 @@ source("")
 
 ```{r}
 
+# Defining the initial conditions
 initial_C <- 10
-
 closure_thres <- 100
 k <- 500
-
 r <- 0.01
 g <- 2
-
 air_temp <- 20
 
+# Defining the necessary components for the ode solver
+years = seq(from=1, to=300, by=1)
+parms = list(closure_thres = 100, k = 500, r = 0.01, g = 2, air_temp = 20)
 
+# Running the solver
+results = ode(y = initial_C, times = years, func = forestgrowthmodel, parms = parms)
+head(results)
 
+# Assigning column names
+colnames(results2)=c("Year","Forest Size")
 
 ```
 
@@ -48,13 +55,18 @@ air_temp <- 20
 
 ```{r}
 
+# Converting to a data frame, and graphing the results
+results <- as.data.frame(results)
 
+ggplot(results, aes(Year, Forest Size))+geom_point()+labs(y="Forest Size", "Years")
 
 ```
 
 # 3. Run a sobol sensitivity analysis that explores how the estimated maximum forest size varies with early and later growth rates. 
 
 ```{r}
+
+# Therefore we are measuring the sensitivity of the r (early growth rate) and g (later growth rate) values
 
 
 
