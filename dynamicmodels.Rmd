@@ -24,6 +24,12 @@ library(sensitivity)
 source("forestgrowthmodel.R")
 
 
+
+# forest_growth(time = c(1:10), C = 10, r = 0.01, g = 2, closure = 100, K = 500, temp = 20)
+
+
+
+
 ```
 
 # 2. Run the model for 300 years (using the ODE solver) starting with an initial forest size of 10 kg/C, and using the following parameters: canopy closure threshold of 100 kgC, a carrying capacity of 500 kg C, a early growth rate of 0.01, a later growth rate of 2 kg/year, and an air temperature of 20C
