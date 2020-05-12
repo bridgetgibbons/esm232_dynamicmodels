@@ -72,7 +72,7 @@ ggplot(results, aes(Year, Forest Size))+geom_point()+labs(y="Forest Size", "Year
 
 ```{r}
 
-# Therefore we are measuring the sensitivity of the r (early growth rate) and g (later growth rate) values
+# Therefore we are measuring the sensitivity of the r (early growth rate) and g (later growth rate) variables
 
 
 
