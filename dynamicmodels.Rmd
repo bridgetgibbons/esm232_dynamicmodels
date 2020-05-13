@@ -76,34 +76,75 @@ ggplot(results, aes(Year, Forest_Size))+geom_point()+labs(y="Forest_Size", "Year
 
 # number of parameters
 
-np = 500
+np = 1000
 
 # distributions for parameters
 
-sobol_r = rnorm(mean = -0.015, sd = 0.003, n = np)
-sobol_g = rnorm(mean = -0.0046, sd = 0.00092, n = np)
+sobol_r = rnorm(mean = 0.01, sd = 0.002, n = np)
+sobol_g = rnorm(mean = 2, sd = 0.4, n = np)
 X1 = cbind.data.frame(sobol_r, sobol_g)
 
 # repeate distribution sampling
 
-sobol_r = rnorm(mean = -0.015, sd = 0.003, n = np)
-sobol_g = rnorm(mean = -0.0046, sd = 0.00092, n = np)
+sobol_r = rnorm(mean = 0.01, sd = 0.002, n = np)
+sobol_g = rnorm(mean = 2, sd = 0.4, n = np)
 X2 = cbind.data.frame(sobol_r, sobol_g)
 
-sobol_forest = sobol2007(model = NULL, X1, X2, nboot = 100)
+sobol_forest = sobol2007(model = NULL, X1, X2, nboot = 300)
 
-# run model for the parameter sets
+sim_times = seq(from=1, to=300)
+sobol_parms = list(closure = 100, K = 500, r=sobol_forest$X$sobol_r[1], g = sobol_forest$X$sobol_g[1], temp = 20)
 
-sobol_forest_result = mapply(FUN = forestgrowthmodel, 
-                      r = sobol_forest$X$sobol_r, 
-                      g = sobol_forest$X$sobol_g, 
-                      MoreArgs = list(climate = clim))
+sens_result = ode(y=C, times=sim_times, func=forestgrowthmodel, parms=sobol_parms)
 
-sobol_forest_tell = sensitivity::tell(sobol_forest, sobol_forest_result, sobol_forest_result.names="mean_value")
+head(sens_result)
+colnames(sens_result)=c("time","forest_size")
 
-sobol_forest_tell$S
+# turn it into a data frame
+sens_result = as.data.frame(sens_result)
+ggplot(sens_result, aes(time, forest_size))+geom_point()
 
-sobol_forest_tell$T
+# extract our metrics of interest from this
+
+compute_metrics = function(sens_result) {
+  max_size = max(sens_result$forest_size)
+return(list(maxsize=maxsize))}
+
+#######################
+# i feel good about the code up until this point, and then get a bit confused with the syntax for parms in the wrapper function and how to make allresults run without an error
+######################
+
+wrapper = function(r, g, C, sim_times, func) {
+    parms = list(r=r, g=g)
+    result = ode(y=C, times=sim_times, func=forestgrowthmodel, parms=parms) 
+    colnames(result)=c("time","forest_size")
+  # get metrics
+  metrics=compute_metrics(as.data.frame(sens_result))
+  return(metrics)
+}
+
+
+allresults = mapply(FUN=wrapper, r=sobol_forest$X$sobol_r, g=sobol_forest$X$sobol_g,
+ MoreArgs=list(C=C, sim_times=sim_times, func=forestgrowthmodel))
+
+allres = as.data.frame(matrix(unlist(allresults), ncol=2, byrow=T))
+colnames(allres) = c("maxsize")
+
+
+# create boxplots
+tmp = allres %>% gather(key="metric", value="value")
+ggplot(tmp, aes(metric, value, col=metric))+geom_boxplot()
+
+
+sens_tell = sensitivity::tell(sobol_forest, allres$maxsize)
+
+# first-order indices (main effect without co-variance)
+sens_tell$S
+
+# total sensitivity index -note that this partitions the output variance - so values sum to 1
+sens_tell$T
+
+plot(sens_tell)
 
 ```
 
@@ -112,8 +153,8 @@ sobol_forest_tell$T
 
 ```{r}
 
-sobol_forest_result_graph <- matrix((unlist(sobol_forest_result)), ncol = 1, byrow = TRUE)
-colnames(sobol_forest_result_graph) = c("mean_value")
+sobol_forest_result_graph <- matrix((unlist(allresult)), ncol = 1, byrow = TRUE)
+colnames(sobol_forest_result_graph) = c("forest_size")
 
 sobol_forest_result_graph_df <- as.data.frame(sobol_forest_result)
 
@@ -133,7 +174,7 @@ boxplot <- ggplot(data = sobol_forest_result_box, aes(x = parameter, y = values)
 boxplot
 
 # Plot of the two sobol indices
-plot(sobol_forest_tell)
+plot(sobol_tell)
 
 ```
 
