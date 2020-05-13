@@ -49,11 +49,11 @@ years = seq(from=1, to=300, by=1)
 parms = list(closure = 100, K = 500, r = 0.01, g = 2, temp = 20)
 
 # Running the solver
-results = ode(y = C, times = years, func = forestgrowthmodel, parms = parms)
+results = ode(y = C, times = years, func = forest_growth, parms = parms)
 head(results)
 
 # Assigning column names
-colnames(results2)=c("Year","Forest Size")
+colnames(results)=c("Year","Forest_Size")
 
 ```
 
@@ -64,7 +64,7 @@ colnames(results2)=c("Year","Forest Size")
 # Converting to a data frame, and graphing the results
 results <- as.data.frame(results)
 
-ggplot(results, aes(Year, Forest Size))+geom_point()+labs(y="Forest Size", "Years")
+ggplot(results, aes(Year, Forest_Size))+geom_point()+labs(y="Forest_Size", "Years")
 
 ```
 
