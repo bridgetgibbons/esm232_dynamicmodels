@@ -168,9 +168,9 @@ plot(sens_tell)
 sobol_forest_result_graph <- matrix((unlist(allresults)), ncol = 1, byrow = TRUE)
 colnames(sobol_forest_result_graph) = c("max_forest_size")
 
-sobol_forest_result_graph_df <- as.data.frame(sobol_forest_result)
+sobol_forest_result_graph_df <- as.data.frame(sobol_forest_result_graph)
 
-sobol_forest_result_2 <- cbind.data.frame(sobol_forest_tell$X, mean_value = sobol_forest_tell$y)
+sobol_forest_result_2 <- cbind.data.frame(sens_tell$X, mean_value = sens_tell$y)
 
 sobol_forest_result_box <- gather(sobol_forest_result_2, key = "parameter", value = "values", sobol_r, sobol_g)
 
