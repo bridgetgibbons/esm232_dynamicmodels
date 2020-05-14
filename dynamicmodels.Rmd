@@ -122,6 +122,8 @@ return(list(max_size=max_size, max_year = max_year))}
 # I feel ok about the code up until this point, and then I start to get a bit confused... I'm not entirely sure where it's going wrong
 ######
 
+compute_metrics(sens_result)
+
 # run ODE for each parameter sets to fill in this metrics data structure
 
 wrapper = function(r, g, C, closure, K, temp, sim_times, func) {
