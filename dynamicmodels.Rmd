@@ -147,7 +147,10 @@ colnames(allres) = c("max_size")
 
 # create boxplots
 tmp = allres %>% gather(key="metric", value="value")
-ggplot(tmp, aes(metric, value, col=metric))+geom_boxplot()
+ggplot(tmp, aes(metric, value, col=metric))+geom_boxplot() +
+  labs(y = "Maximum Forest Size (kg/C",
+       x = "") +
+  theme(legend.position = "none")
 
 
 sens_tell = sensitivity::tell(sobol_forest, allres$max_size)
@@ -182,7 +185,8 @@ boxplot <- ggplot(data = sobol_forest_result_box, aes(x = parameter, y = values)
       x = "Parameters",
       y = "Sensitivity"
       ) +
-    theme_classic()
+    theme_classic() +
+  theme(legend.position = "none")
 
 boxplot
 
