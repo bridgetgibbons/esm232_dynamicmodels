@@ -114,9 +114,7 @@ ggplot(sens_result, aes(time, forest_size))+geom_point()
 
 compute_metrics = function(sens_result) {
   max_size = max(sens_result$forest_size)
-  idx = which.max(sens_result$forest_size)
-  max_year = sens_result$time[idx]
-return(list(max_size=max_size, max_year = max_year))}
+return(list(max_size=max_size))}
 
 ######
 # I feel ok about the code up until this point, and then I start to get a bit confused... I'm not entirely sure where it's going wrong
@@ -141,8 +139,8 @@ allresults = mapply(FUN=wrapper, r=sobol_forest$X$sobol_r, g=sobol_forest$X$sobo
  MoreArgs=list(C=C, sim_times=sim_times, func=forestgrowthmodel))
 
 
-allres = as.data.frame(matrix(unlist(allresults), ncol=2, byrow=T))
-colnames(allres) = c("max_size", "max_year")
+allres = as.data.frame(matrix(unlist(allresults), ncol=1, byrow=T))
+colnames(allres) = c("max_size")
 
 
 # create boxplots
@@ -168,7 +166,7 @@ plot(sens_tell)
 ```{r}
 
 sobol_forest_result_graph <- matrix((unlist(allresults)), ncol = 1, byrow = TRUE)
-colnames(sobol_forest_result_graph) = c("forest_size")
+colnames(sobol_forest_result_graph) = c("max_forest_size")
 
 sobol_forest_result_graph_df <- as.data.frame(sobol_forest_result)
 
