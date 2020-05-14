@@ -167,7 +167,7 @@ plot(sens_tell)
 
 ```{r}
 
-sobol_forest_result_graph <- matrix((unlist(allresult)), ncol = 1, byrow = TRUE)
+sobol_forest_result_graph <- matrix((unlist(allresults)), ncol = 1, byrow = TRUE)
 colnames(sobol_forest_result_graph) = c("forest_size")
 
 sobol_forest_result_graph_df <- as.data.frame(sobol_forest_result)

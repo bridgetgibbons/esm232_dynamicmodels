@@ -6,8 +6,8 @@
 # dC/dt = g. for forests where carbon is above the threshold canopy closure
 # dC/dt = 0 once carrying capacity is reached
 
-# if C < closure_thres, then use the above equation (and r as the exponential growth rate)
-# if C > closure_thres, then use the above equation (and g as the linear growth rate)
+# if C < closure, then use the above equation (and r as the exponential growth rate)
+# if C > closure, then use the above equation (and g as the linear growth rate)
 
 forestgrowthmodel = function(time, C, parms){
   
