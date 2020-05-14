@@ -6,7 +6,9 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
 ```
 
 # 1. Implement this model in R (as a differential equation)
@@ -156,7 +158,6 @@ sens_tell$S
 # total sensitivity index -note that this partitions the output variance - so values sum to 1
 sens_tell$T
 
-plot(sens_tell)
 
 ```
 
@@ -179,14 +180,14 @@ boxplot <- ggplot(data = sobol_forest_result_box, aes(x = parameter, y = values)
     labs(
       title = "Sobol Method",
       x = "Parameters",
-      y = "Yield (As Anomaly)"
+      y = "Sensitivity"
       ) +
     theme_classic()
 
 boxplot
 
 # Plot of the two sobol indices
-plot(sobol_tell)
+plot(sens_tell)
 
 ```
 
