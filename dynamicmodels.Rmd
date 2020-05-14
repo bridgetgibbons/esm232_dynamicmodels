@@ -74,6 +74,8 @@ ggplot(results, aes(Year, Forest_Size))+geom_point()+labs(y="Forest_Size", "Year
 
 # Therefore we are measuring the sensitivity of the r (early growth rate) and g (later growth rate) variables
 
+# obtain parameter sets
+
 # number of parameters
 
 np = 1000
@@ -90,12 +92,13 @@ sobol_r = rnorm(mean = 0.01, sd = 0.002, n = np)
 sobol_g = rnorm(mean = 2, sd = 0.4, n = np)
 X2 = cbind.data.frame(sobol_r, sobol_g)
 
-sobol_forest = sobol2007(model = NULL, X1, X2, nboot = 300)
+sobol_forest = sobol2007(model = NULL, X1, X2, nboot = 200)
+
 
 sim_times = seq(from=1, to=300)
-sobol_parms = list(closure = 100, K = 500, r=sobol_forest$X$sobol_r[1], g = sobol_forest$X$sobol_g[1], temp = 20)
+parms = list(r=sobol_forest$X$sobol_r[1], g=sobol_forest$X$sobol_g[1], closure = 100, K = 500, temp = 20)
 
-sens_result = ode(y=C, times=sim_times, func=forestgrowthmodel, parms=sobol_parms)
+sens_result = ode(y=C, times=sim_times, func=forestgrowthmodel, parms=parms)
 
 head(sens_result)
 colnames(sens_result)=c("time","forest_size")
@@ -104,17 +107,24 @@ colnames(sens_result)=c("time","forest_size")
 sens_result = as.data.frame(sens_result)
 ggplot(sens_result, aes(time, forest_size))+geom_point()
 
-# extract our metrics of interest from this
+
+# build a function that will extract the information (metrics) you want from your dynamics model (output of the ode)
+
+# create a data structure to store the metrics for each parameter set - lets call it metrics (but could be anything)
 
 compute_metrics = function(sens_result) {
   max_size = max(sens_result$forest_size)
-return(list(max_size=max_size))}
+  idx = which.max(sens_result$forest_size)
+  max_year = sens_result$time[idx]
+return(list(max_size=max_size, max_year = max_year))}
 
 ######
 # I feel ok about the code up until this point, and then I start to get a bit confused... I'm not entirely sure where it's going wrong
 ######
 
-wrapper = function(r, g, C, sim_times, func) {
+# run ODE for each parameter sets to fill in this metrics data structure
+
+wrapper = function(r, g, C, closure, K, temp, sim_times, func) {
     parms = list(r=r, g=g, temp = 20, closure = 100, K = 500)
     result = ode(y=C, times=sim_times, func=forestgrowthmodel, parms=parms) 
     colnames(result)=c("time","forest_size")
@@ -123,13 +133,14 @@ wrapper = function(r, g, C, sim_times, func) {
   return(metrics)
 }
 
+# send the metrics data structure back to the sensitivity analysis object (from sobel or LHS)
 
 allresults = mapply(FUN=wrapper, r=sobol_forest$X$sobol_r, g=sobol_forest$X$sobol_g,
  MoreArgs=list(C=C, sim_times=sim_times, func=forestgrowthmodel))
 
 
-allres = as.data.frame(matrix(unlist(allresults), ncol=1, byrow=T))
-colnames(allres) = c("max_size")
+allres = as.data.frame(matrix(unlist(allresults), ncol=2, byrow=T))
+colnames(allres) = c("max_size", "max_year")
 
 
 # create boxplots
