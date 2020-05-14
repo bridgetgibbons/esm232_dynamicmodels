@@ -66,7 +66,7 @@ colnames(results)=c("Year","Forest_Size")
 # Converting to a data frame, and graphing the results
 results <- as.data.frame(results)
 
-ggplot(results, aes(Year, Forest_Size))+geom_point()+labs(y="Forest_Size", "Years")
+ggplot(results, aes(Year, Forest_Size))+geom_point()+labs(y="Forest Size", "Years")
 
 ```
 
@@ -107,7 +107,9 @@ colnames(sens_result)=c("time","forest_size")
 
 # turn it into a data frame
 sens_result = as.data.frame(sens_result)
-ggplot(sens_result, aes(time, forest_size))+geom_point()
+ggplot(sens_result, aes(time, forest_size))+geom_point() +
+  labs(x = "Year",
+       y = "Forest Size")
 
 
 # build a function that will extract the information (metrics) you want from your dynamics model (output of the ode)
