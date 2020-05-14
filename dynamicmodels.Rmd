@@ -112,8 +112,8 @@ ggplot(sens_result, aes(time, forest_size))+geom_point()
 
 # create a data structure to store the metrics for each parameter set - lets call it metrics (but could be anything)
 
-compute_metrics = function(sens_result) {
-  max_size = max(sens_result$forest_size)
+compute_metrics = function(result) {
+  max_size = max(result$forest_size)
 return(list(max_size=max_size))}
 
 ######
@@ -125,11 +125,11 @@ compute_metrics(sens_result)
 # run ODE for each parameter sets to fill in this metrics data structure
 
 wrapper = function(r, g, C, closure, K, temp, sim_times, func) {
-    parms = list(r=r, g=g, C = 10, temp = 20, closure = 100, K = 500)
+    parms = list(r=r, g=g, C = 10, closure = 100, K = 500, temp = 20)
     result = ode(y=C, times=sim_times, func=forestgrowthmodel, parms=parms) 
     colnames(result)=c("time","forest_size")
   # get metrics
-  metrics=compute_metrics(as.data.frame(sens_result))
+  metrics=compute_metrics(as.data.frame(result))
   return(metrics)
 }
 
