@@ -108,14 +108,14 @@ ggplot(sens_result, aes(time, forest_size))+geom_point()
 
 compute_metrics = function(sens_result) {
   max_size = max(sens_result$forest_size)
-return(list(maxsize=maxsize))}
+return(list(max_size=max_size))}
 
-#######################
-# i feel good about the code up until this point, and then get a bit confused with the syntax for parms in the wrapper function and how to make allresults run without an error
-######################
+######
+# I feel ok about the code up until this point, and then I start to get a bit confused... I'm not entirely sure where it's going wrong
+######
 
 wrapper = function(r, g, C, sim_times, func) {
-    parms = list(r=r, g=g)
+    parms = list(r=r, g=g, temp = 20, closure = 100, K = 500)
     result = ode(y=C, times=sim_times, func=forestgrowthmodel, parms=parms) 
     colnames(result)=c("time","forest_size")
   # get metrics
@@ -127,8 +127,9 @@ wrapper = function(r, g, C, sim_times, func) {
 allresults = mapply(FUN=wrapper, r=sobol_forest$X$sobol_r, g=sobol_forest$X$sobol_g,
  MoreArgs=list(C=C, sim_times=sim_times, func=forestgrowthmodel))
 
-allres = as.data.frame(matrix(unlist(allresults), ncol=2, byrow=T))
-colnames(allres) = c("maxsize")
+
+allres = as.data.frame(matrix(unlist(allresults), ncol=1, byrow=T))
+colnames(allres) = c("max_size")
 
 
 # create boxplots
@@ -136,7 +137,7 @@ tmp = allres %>% gather(key="metric", value="value")
 ggplot(tmp, aes(metric, value, col=metric))+geom_boxplot()
 
 
-sens_tell = sensitivity::tell(sobol_forest, allres$maxsize)
+sens_tell = sensitivity::tell(sobol_forest, allres$max_size)
 
 # first-order indices (main effect without co-variance)
 sens_tell$S
